@@ -2,8 +2,11 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_COMPOSE_VERSION = '2.20.0'
-        PROJECT_NAME = 'fullstack-app'
+        DB_NAME = 'fullstack_db'
+        DB_USER = 'root'
+        DB_PASSWORD = 'SecureRootPassword123!'
+        JWT_SECRET = 'jenkins-deployment-secret-key-minimum-32-characters-required-for-security'
+        NODE_ENV = 'production'
     }
     
     stages {
@@ -20,18 +23,36 @@ pipeline {
             steps {
                 script {
                     echo '🔧 Setting up environment variables...'
-                    // Copy environment variables if not exists
                     sh '''
+                        # Create .env file if it doesn't exist
                         if [ ! -f .env ]; then
                             echo "Creating .env file..."
                             cat > .env << EOF
-DB_NAME=fullstack_db
-DB_USER=root
-DB_PASSWORD=SecureRootPassword123!
-JWT_SECRET=jenkins-deployment-secret-key-minimum-32-characters-required-for-security
-NODE_ENV=production
+DB_NAME=${DB_NAME}
+DB_USER=${DB_USER}
+DB_PASSWORD=${DB_PASSWORD}
+JWT_SECRET=${JWT_SECRET}
+NODE_ENV=${NODE_ENV}
+MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+MYSQL_DATABASE=${DB_NAME}
 EOF
                         fi
+                        
+                        echo "✅ Environment setup complete"
+                        echo "Current .env file:"
+                        cat .env
+                    '''
+                }
+            }
+        }
+        
+        stage('Clean Environment') {
+            steps {
+                script {
+                    echo '🧹 Cleaning up previous containers...'
+                    sh '''
+                        docker-compose down -v || true
+                        docker system prune -f || true
                     '''
                 }
             }
@@ -42,8 +63,41 @@ EOF
                 script {
                     echo '🏗️ Building Docker images...'
                     sh '''
-                        docker-compose down -v || true
                         docker-compose build --no-cache
+                    '''
+                }
+            }
+        }
+        
+        stage('Start Services') {
+            steps {
+                script {
+                    echo '🚀 Starting services...'
+                    sh '''
+                        docker-compose up -d
+                        
+                        echo "Waiting for services to be healthy..."
+                        timeout=120
+                        elapsed=0
+                        interval=5
+                        
+                        while [ $elapsed -lt $timeout ]; do
+                            if docker-compose ps | grep -q "healthy"; then
+                                echo "✅ Services are healthy"
+                                docker-compose ps
+                                break
+                            fi
+                            echo "⏳ Waiting for services... ($elapsed/$timeout seconds)"
+                            docker-compose ps
+                            sleep $interval
+                            elapsed=$((elapsed + interval))
+                        done
+                        
+                        if [ $elapsed -ge $timeout ]; then
+                            echo "❌ Timeout waiting for services"
+                            docker-compose logs
+                            exit 1
+                        fi
                     '''
                 }
             }
@@ -54,38 +108,34 @@ EOF
                 script {
                     echo '🧪 Running integration tests...'
                     
-                    // Start services
-                    sh 'docker-compose up -d'
-                    
-                    // Wait for services to be healthy
-                    echo 'Waiting for services to be healthy...'
                     sh '''
-                        timeout=120
-                        elapsed=0
-                        interval=5
-                        
-                        while [ $elapsed -lt $timeout ]; do
-                            if docker-compose ps | grep -q "healthy"; then
-                                echo "✅ Services are healthy"
-                                break
-                            fi
-                            echo "Waiting for services... ($elapsed/$timeout seconds)"
-                            sleep $interval
-                            elapsed=$((elapsed + interval))
-                        done
-                        
-                        if [ $elapsed -ge $timeout ]; then
-                            echo "❌ Timeout waiting for services to be healthy"
-                            docker-compose ps
-                            docker-compose logs
-                            exit 1
+                        # Fix line endings (in case of Windows development)
+                        if command -v dos2unix > /dev/null; then
+                            dos2unix ./tests/integration-tests.sh 2>/dev/null || true
+                        else
+                            sed -i 's/\r$//' ./tests/integration-tests.sh 2>/dev/null || true
                         fi
-                    '''
-                    
-                    // Run integration tests
-                    sh '''
+                        
+                        # Make script executable
                         chmod +x ./tests/integration-tests.sh
-                        ./tests/integration-tests.sh
+                        
+                        # Run tests with explicit bash
+                        bash ./tests/integration-tests.sh
+                        
+                        # Capture exit code
+                        TEST_EXIT_CODE=$?
+                        echo "Test script exited with code: $TEST_EXIT_CODE"
+                        
+                        if [ $TEST_EXIT_CODE -ne 0 ]; then
+                            echo "❌ Tests failed! Capturing debug info..."
+                            echo "=== CONTAINER STATUS ==="
+                            docker-compose ps
+                            echo "=== CONTAINER LOGS ==="
+                            docker-compose logs --tail=50
+                            exit $TEST_EXIT_CODE
+                        fi
+                        
+                        echo "✅ All tests passed!"
                     '''
                 }
             }
@@ -96,14 +146,15 @@ EOF
                 script {
                     echo '🚀 Deploying application...'
                     sh '''
-                        # Application is already running from test stage
-                        # Just verify all services are up
                         docker-compose ps
                         
-                        echo "✅ Application deployed successfully!"
+                        echo "==================================="
+                        echo "✅ APPLICATION DEPLOYED SUCCESSFULLY!"
+                        echo "==================================="
                         echo "Frontend: http://localhost:80"
                         echo "Backend API: http://localhost:5000"
                         echo "Database: localhost:3306"
+                        echo "==================================="
                     '''
                 }
             }
@@ -114,7 +165,6 @@ EOF
         success {
             script {
                 echo '✅ Pipeline completed successfully!'
-                // You can add notification here (email, Slack, etc.)
                 sh '''
                     echo "==================================="
                     echo "BUILD SUCCESSFUL"
@@ -141,20 +191,28 @@ EOF
                     echo "==================================="
                     echo "Checking logs..."
                     docker-compose logs --tail=50
+                    
+                    echo "=== CONTAINER STATUS ==="
+                    docker-compose ps
+                    
+                    echo "=== DISK SPACE ==="
+                    df -h
+                    
+                    echo "=== MEMORY ==="
+                    free -h
                 '''
-                // You can add notification here (email, Slack, etc.)
             }
         }
         
         always {
             script {
-                echo '🧹 Cleaning up...'
-                // Archive logs
+                echo '🧹 Archiving logs...'
                 sh '''
                     mkdir -p logs
                     docker-compose logs > logs/docker-compose-${BUILD_NUMBER}.log 2>&1 || true
+                    cp ./tests/integration-tests.sh logs/test-script-${BUILD_NUMBER}.sh 2>/dev/null || true
                 '''
-                archiveArtifacts artifacts: 'logs/*.log', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'logs/*.log, logs/*.sh', allowEmptyArchive: true
             }
         }
     }
