@@ -13,7 +13,7 @@ A complete two-tier web application with Angular frontend, Node.js/Express backe
 - [Jenkins CI/CD Setup](#jenkins-cicd-setup)
 - [API Documentation](#api-documentation)
 - [Testing](#testing)
-- [Troubleshooting](#troubleshooting)
+- [Troubleshooting](#troubleshooting) yes
 
 ## 🏗️ Architecture Overview
 
