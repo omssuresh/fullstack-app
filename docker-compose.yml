@@ -8,8 +8,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-SecureRootPassword123!}
       MYSQL_DATABASE: ${DB_NAME:-fullstack_db}
-      MYSQL_USER: ${DB_USER:-appuser}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-SecureRootPassword123!}
+      #MYSQL_USER: ${DB_USER:-appuser}
+      #MYSQL_PASSWORD: ${DB_PASSWORD:-SecureRootPassword123!}
     ports:
       - "3306:3306"
     volumes:
