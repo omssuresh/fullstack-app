@@ -1,0 +1,74 @@
+<div class="container-fluid">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">FullStack App</a>
+      <div class="d-flex">
+        <span class="navbar-text me-3 text-white">
+          Welcome, {{ currentUser?.username }}!
+        </span>
+        <button class="btn btn-outline-light btn-sm" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">User Dashboard</h3>
+          </div>
+          <div class="card-body">
+            <div *ngIf="loading" class="text-center">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+
+            <div *ngIf="!loading && currentUser">
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <div class="card bg-light">
+                    <div class="card-body">
+                      <h5 class="card-title">Profile Information</h5>
+                      <hr>
+                      <p><strong>Username:</strong> {{ currentUser.username }}</p>
+                      <p><strong>Email:</strong> {{ currentUser.email }}</p>
+                      <p><strong>Role:</strong> <span class="badge bg-success">{{ currentUser.role }}</span></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card bg-light">
+                    <div class="card-body">
+                      <h5 class="card-title">Quick Actions</h5>
+                      <hr>
+                      <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" disabled>View Profile</button>
+                        <button class="btn btn-outline-primary" disabled>Update Settings</button>
+                        <button 
+                          *ngIf="currentUser.role === 'admin'" 
+                          class="btn btn-primary"
+                          (click)="goToAdmin()"
+                        >
+                          Go to Admin Panel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="alert alert-info" role="alert">
+                <h5 class="alert-heading">Welcome to your Dashboard!</h5>
+                <p>This is your personalized user dashboard. Here you can manage your profile and access various features of the application.</p>
+                <hr>
+                <p class="mb-0">You are currently logged in as a <strong>{{ currentUser.role }}</strong>.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

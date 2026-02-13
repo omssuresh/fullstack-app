@@ -1,0 +1,99 @@
+<div class="container">
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow">
+        <div class="card-body p-4">
+          <h2 class="text-center mb-4">Register</h2>
+          
+          <div *ngIf="error" class="alert alert-danger" role="alert">
+            {{ error }}
+          </div>
+
+          <div *ngIf="success" class="alert alert-success" role="alert">
+            {{ success }}
+          </div>
+
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="username" 
+                formControlName="username"
+                [class.is-invalid]="f['username'].invalid && f['username'].touched"
+                placeholder="Choose a username"
+              >
+              <div *ngIf="f['username'].invalid && f['username'].touched" class="invalid-feedback">
+                <div *ngIf="f['username'].errors?.['required']">Username is required</div>
+                <div *ngIf="f['username'].errors?.['minlength']">Username must be at least 3 characters</div>
+                <div *ngIf="f['username'].errors?.['pattern']">Username can only contain letters, numbers, and underscores</div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email" 
+                formControlName="email"
+                [class.is-invalid]="f['email'].invalid && f['email'].touched"
+                placeholder="Enter your email"
+              >
+              <div *ngIf="f['email'].invalid && f['email'].touched" class="invalid-feedback">
+                <div *ngIf="f['email'].errors?.['required']">Email is required</div>
+                <div *ngIf="f['email'].errors?.['email']">Please enter a valid email</div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="password" 
+                formControlName="password"
+                [class.is-invalid]="f['password'].invalid && f['password'].touched"
+                placeholder="Create a password"
+              >
+              <div *ngIf="f['password'].invalid && f['password'].touched" class="invalid-feedback">
+                <div *ngIf="f['password'].errors?.['required']">Password is required</div>
+                <div *ngIf="f['password'].errors?.['minlength']">Password must be at least 6 characters</div>
+                <div *ngIf="f['password'].errors?.['pattern']">Password must contain uppercase, lowercase, and number</div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Confirm Password</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                id="confirmPassword" 
+                formControlName="confirmPassword"
+                [class.is-invalid]="(f['confirmPassword'].invalid && f['confirmPassword'].touched) || registerForm.errors?.['mismatch']"
+                placeholder="Confirm your password"
+              >
+              <div *ngIf="registerForm.errors?.['mismatch'] && f['confirmPassword'].touched" class="invalid-feedback d-block">
+                Passwords do not match
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              class="btn btn-primary w-100 mb-3" 
+              [disabled]="loading || registerForm.invalid"
+            >
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+              {{ loading ? 'Registering...' : 'Register' }}
+            </button>
+          </form>
+
+          <div class="text-center">
+            <p class="mb-0">Already have an account? <a routerLink="/login">Login here</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
