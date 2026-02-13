@@ -1,5 +1,6 @@
 const { pool } = require('../config/database');
-const bcrypt = require('bcrypt');
+//const bcrypt = require('bcrypt');
+const argon2 = require('argon2');
 
 const SALT_ROUNDS = 10;
 
@@ -11,7 +12,7 @@ class User {
     const { username, email, password, role = 'user' } = userData;
     
     // Hash password
-    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+    const passwordHash = await argon2.hash(password, SALT_ROUNDS);
     
     const query = `
       INSERT INTO users (username, email, password_hash, role)
