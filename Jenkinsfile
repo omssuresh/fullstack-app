@@ -72,34 +72,25 @@ EOF
         stage('Start Services') {
             steps {
                 script {
-                    echo '🚀 Starting services...'
-                    sh '''
-                        docker-compose up -d
-                        
-                        echo "Waiting for services to be healthy..."
-                        timeout=120
-                        elapsed=0
-                        interval=5
-                        
-                        while [ $elapsed -lt $timeout ]; do
-                            if docker-compose ps | grep -q "healthy"; then
-                                echo "✅ Services are healthy"
-                                docker-compose ps
-                                break
-                            fi
-                            echo "⏳ Waiting for services... ($elapsed/$timeout seconds)"
-                            docker-compose ps
-                            sleep $interval
-                            elapsed=$((elapsed + interval))
-                        done
-                        
-                        if [ $elapsed -ge $timeout ]; then
-                            echo "❌ Timeout waiting for services"
-                            docker-compose logs
-                            exit 1
-                        fi
-                    '''
+            echo '🚀 Starting services...'
+            sh '''
+                docker-compose up -d
+                
+                echo "Waiting 90 seconds for services to initialize..."
+                sleep 90
+                
+                # Verify backend is responding
+                echo "Verifying backend health..."
+                curl -s http://localhost:5000/health || {
+                    echo "Backend not responding, checking logs..."
+                    docker-compose logs --tail=20 backend
+                    exit 1
                 }
+                
+                echo "✅ Services are ready"
+                docker-compose ps
+            '''
+        }
             }
         }
         
