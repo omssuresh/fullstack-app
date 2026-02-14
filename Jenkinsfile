@@ -41,6 +41,26 @@ EOF
                 '''
             }
         }
+
+         stage('Get EC2 IP and Deploy') {
+            steps {
+                script {
+                    // Get EC2 public IP
+                    def ec2Ip = sh(
+                        script: 'curl -s http://169.254.169.254/latest/meta-data/public-ipv4',
+                        returnStdout: true
+                    ).trim()
+                    
+                    echo "🌐 EC2 Public IP: ${ec2Ip}"
+                    
+                    // Set environment variable and run docker-compose
+                    sh """
+                        export EC2_IP=${ec2Ip}
+                        docker-compose up -d --build
+                    """
+                }
+            }
+        }
         
         stage('Clean Environment') {
             steps {
