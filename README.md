@@ -17,32 +17,6 @@ A complete two-tier web application with Angular frontend, Node.js/Express backe
 
 ## 🏗️ Architecture Overview
 
-```
-┌─────────────────┐         ┌─────────────────┐         ┌─────────────────┐
-│                 │         │                 │         │                 │
-│    Angular      │────────>│   Node.js/      │────────>│     MySQL       │
-│    Frontend     │         │   Express API   │         │    Database     │
-│   (Port 80)     │<────────│   (Port 5000)   │<────────│   (Port 3306)   │
-│                 │         │                 │         │                 │
-└─────────────────┘         └─────────────────┘         └─────────────────┘
-        │                           │                           │
-        └───────────────────────────┴───────────────────────────┘
-                                    │
-                            Docker Network
-                                    │
-                          ┌─────────┴─────────┐
-                          │                   │
-                          │  Docker Compose   │
-                          │                   │
-                          └───────────────────┘
-                                    │
-                          ┌─────────┴─────────┐
-                          │                   │
-                          │  Jenkins CI/CD    │
-                          │   (Port 8080)     │
-                          │                   │
-                          └───────────────────┘
-```
 
 ## ✨ Features
 
@@ -102,69 +76,6 @@ A complete two-tier web application with Angular frontend, Node.js/Express backe
 - Nginx
 - AWS EC2
 
-## 📦 Prerequisites
-
-- Docker (20.10+)
-- Docker Compose (2.0+)
-- Git
-- Node.js 18+ (for local development)
-- AWS Account (for cloud deployment)
-
-## 🚀 Local Development Setup
-
-### 1. Clone the Repository
-
-```bash
-git clone <your-repository-url>
-cd fullstack-app
-```
-
-### 2. Configure Environment Variables
-
-```bash
-# Copy environment example
-cp .env.example .env
-
-# Edit .env file with your values
-nano .env
-```
-
-### 3. Start the Application
-
-```bash
-# Build and start all services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Check service status
-docker-compose ps
-```
-
-### 4. Access the Application
-
-- **Frontend:** http://localhost
-- **Backend API:** http://localhost:5000
-- **Database:** localhost:3306
-
-### 5. Default Admin Credentials
-
-```
-Email: admin@example.com
-Password: Admin@123
-```
-
-**⚠️ IMPORTANT:** Change the default admin password in production!
-
-### 6. Stop the Application
-
-```bash
-docker-compose down
-
-# Remove volumes (WARNING: This deletes all data)
-docker-compose down -v
-```
 
 ## ☁️ AWS EC2 Deployment
 
