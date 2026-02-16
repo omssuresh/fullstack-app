@@ -17,7 +17,7 @@ app.use(helmet());
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:80'||'http://http://43.205.254.103',
+  origin: process.env.FRONTEND_URL || 'http://localhost:80'||'http://43.205.254.103',
   credentials: true,
   optionsSuccessStatus: 200
 };
