@@ -97,6 +97,7 @@ export class AdminComponent implements OnInit {
   }
 
   logout(): void {
+    console.log("just for testing auto")
     this.authService.logout();
   }
 
