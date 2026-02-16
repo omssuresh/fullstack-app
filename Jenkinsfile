@@ -46,10 +46,11 @@ EOF
             steps {
                 script {
                     // Get EC2 public IP
-                    def ec2Ip = sh(
-                        script: 'curl -s http://169.254.169.254/latest/meta-data/public-ipv4',
-                        returnStdout: true
-                    ).trim()
+                              // Your known public IP
+                    def ec2Ip = '43.205.254.103'
+                    
+                    echo "🌐 Using EC2 IP: ${ec2Ip}"
+                    env.EC2_IP = ec2Ip
                     
                     echo "🌐 EC2 Public IP: ${ec2Ip}"
                     
