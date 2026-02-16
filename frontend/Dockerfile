@@ -16,7 +16,7 @@ RUN npm ci
 COPY . .
 
 # Accept build argument for API URL
-ARG API_URL=http://localhost:5000/api
+ARG API_URL=http://43.205.254.103:5000/api
 
 # Override environment.ts with the dynamic URL
 RUN echo "export const environment = { production: true, apiUrl: '${API_URL}' };" > src/environments/environment.ts
