@@ -78,7 +78,7 @@ class User {
    * Verify password
    */
   static async verifyPassword(plainPassword, hashedPassword) {
-    return await bcrypt.compare(plainPassword, hashedPassword);
+    return await argon2.compare(plainPassword, hashedPassword);
   }
 
   /**
