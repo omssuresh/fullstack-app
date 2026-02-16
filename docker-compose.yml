@@ -49,7 +49,7 @@ services:
     networks:
       - fullstack-network
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+      test: ["CMD", "sh", "-c", "wget -q -O- http://$(hostname -i):5000/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 10
