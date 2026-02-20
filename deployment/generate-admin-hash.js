@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 // Generate hash for default admin password
 const password = 'Admin@123';
