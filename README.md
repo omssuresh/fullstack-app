@@ -26,6 +26,7 @@ This document outlines the step-by-step process for deploying a 2-tier web appli
 
 
 ### **2. Architecture Diagram**
+
 +-----------------+      +----------------------+      +-----------------------------+
 |   Developer     |----->|     GitHub Repo      |----->|        Jenkins Server       |
 | (pushes code)   |      | (Source Code Mgmt)   |      |  (on AWS EC2)               |
@@ -42,12 +43,7 @@ This document outlines the step-by-step process for deploying a 2-tier web appli
                                                        |      (Same AWS EC2)         |
                                                        |                             |
                                                        | +-------------------------+ |
-                                                       | | Docker Container:Angular| |
-                                                       | +-------------------------+ |
-                                                       |              |              |
-                                                       |              v              |
-                                                       | +-------------------------+ |
-                                                       | | Docker Container:Node.js| |
+                                                       | | Docker Container: Flask | |
                                                        | +-------------------------+ |
                                                        |              |              |
                                                        |              v              |
