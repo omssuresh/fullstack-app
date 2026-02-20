@@ -8,15 +8,15 @@ A complete two-tier web application with Angular frontend, Node.js/Express backe
 
 ### **Table of Contents**
 
-- 1. [Project Overview](#1-project-overview)
-- 2. [Architecture Diagram](#2-architecture-diagram)
-- 3. [Step 1: AWS EC2 Instance Preparation](#3-step-1-aws-ec2-instance-preparation)
-- 4. [Step 2: Install Dependencies on EC2](#4-step-2-install-dependencies-on-ec2)
-- 5. [Step 3: Jenkins Installation and Setup](#5-step-3-jenkins-installation-and-setup)
-- 6. [Step 5: Jenkins Pipeline Creation and Execution](#6-step-5-jenkins-pipeline-creation-and-execution)
-- 8. [Conclusion](#7-conclusion)
-- 8. [Infrastructure Diagram](#8-infrastructure-diagram)
-- 9. [Work flow Diagram](#9-work-flow-diagram)
+1. [Project Overview](#1-project-overview)
+2. [Architecture Diagram](#2-architecture-diagram)
+3. [Step 1: AWS EC2 Instance Preparation](#3-step-1-aws-ec2-instance-preparation)
+4. [Step 2: Install Dependencies on EC2](#4-step-2-install-dependencies-on-ec2)
+5. [Step 3: Jenkins Installation and Setup](#5-step-3-jenkins-installation-and-setup)
+6. [Step 5: Jenkins Pipeline Creation and Execution](#6-step-5-jenkins-pipeline-creation-and-execution)
+7. [Conclusion](#7-conclusion)
+8. [Infrastructure Diagram](#8-infrastructure-diagram)
+9. [Work flow Diagram](#9-work-flow-diagram)
 - [API Documentation](#api-documentation)
 - [Testing](#testing)
 - [Troubleshooting](#troubleshooting) yes
@@ -27,6 +27,7 @@ This document outlines the step-by-step process for deploying a 2-tier web appli
 
 ### **2. Architecture Diagram**
 
+```
 +-----------------+      +----------------------+      +-----------------------------+
 |   Developer     |----->|     GitHub Repo      |----->|        Jenkins Server       |
 | (pushes code)   |      | (Source Code Mgmt)   |      |  (on AWS EC2)               |
@@ -58,6 +59,7 @@ This document outlines the step-by-step process for deploying a 2-tier web appli
                                                        | | Docker Container: MySQL | |
                                                        | +-------------------------+ |
                                                        +-----------------------------+
+```
 
 
 
