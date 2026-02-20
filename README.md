@@ -43,7 +43,14 @@ This document outlines the step-by-step process for deploying a 2-tier web appli
                                                        |      (Same AWS EC2)         |
                                                        |                             |
                                                        | +-------------------------+ |
-                                                       | | Docker Container: Flask | |
+                                                       | | Docker Container:       | |
+                                                       | | Frontend (Nginx)        | |
+                                                       | +-------------------------+ |
+                                                       |              |              |
+                                                       |              v              |
+                                                       | +-------------------------+ |
+                                                       | | Docker Container:       | |
+                                                       | | Backend (Node.js)       | |
                                                        | +-------------------------+ |
                                                        |              |              |
                                                        |              v              |
