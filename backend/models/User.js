@@ -1,6 +1,5 @@
 const { pool } = require('../config/database');
-const bcrypt = require('bcrypt');
-const argon2 = require('argon2');
+const bcrypt = require('bcryptjs');
 
 const SALT_ROUNDS = 10;
 
